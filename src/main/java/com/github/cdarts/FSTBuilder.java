@@ -77,7 +77,7 @@ public class FSTBuilder {
             final var lastPrefixState = tempStates.get(prefixLengthPlus1 - 1);
             lastPrefixState.setTransitionOutput(currentWord[prefixLengthPlus1 - 1], currentOutputTail);
 
-            // for passing currentWord to next iteration
+            // pass currentWord to next iteration
             return current;
         });
 
