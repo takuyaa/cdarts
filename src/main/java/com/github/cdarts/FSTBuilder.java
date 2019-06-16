@@ -9,9 +9,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class FSTBuilder {
-    public FSTBuilder() {
-    }
-
     public FST build(Stream<Map.Entry<byte[], Integer>> entries) {
         final var statesDict = new StatesDict();
         final List<MutableState> tempStates = new ArrayList<>();
