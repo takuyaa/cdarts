@@ -3,6 +3,7 @@ package com.github.cdarts;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.stream.Stream;
 
 abstract class State {
     boolean isFinal;
@@ -84,6 +85,8 @@ abstract class State {
 class FrozenState extends State {
     // TODO make FrozenTransition class, and use it here
     FrozenState(boolean isFinal, Transition[] transitions, OptionalInt output) {
+        // assert that all next states from FrozenState are instances of FrozenState
+        assert Stream.of(transitions).allMatch(t -> t.nextState instanceof FrozenState);
         this.isFinal = isFinal;
         this.transitions = transitions;
         this.output = output;
