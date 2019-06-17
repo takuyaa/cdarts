@@ -30,15 +30,6 @@ abstract class State {
         }
         return OptionalInt.empty();
     }
-}
-
-class FrozenState extends State {
-    // TODO make FrozenTransition class, and use it here
-    FrozenState(boolean isFinal, Transition[] transitions, OptionalInt output) {
-        this.isFinal = isFinal;
-        this.transitions = transitions;
-        this.output = output;
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -58,9 +49,11 @@ class FrozenState extends State {
             if (next.isEmpty()) {
                 return false;
             }
+            // we check these 2 next states are the same Java object
             State nextState = next.get();
-            // we check these 2 next states recursively
-            if (!nextState.equals(transition.nextState)) {
+            assert other instanceof FrozenState ? nextState instanceof FrozenState : true;
+            assert this instanceof FrozenState ? transition.nextState instanceof FrozenState : true;
+            if (nextState != transition.nextState) {
                 return false;
             }
         }
@@ -83,6 +76,15 @@ class FrozenState extends State {
         }
         result = result * PRIME + this.output.hashCode();
         return result;
+    }
+}
+
+class FrozenState extends State {
+    // TODO make FrozenTransition class, and use it here
+    FrozenState(boolean isFinal, Transition[] transitions, OptionalInt output) {
+        this.isFinal = isFinal;
+        this.transitions = transitions;
+        this.output = output;
     }
 }
 
