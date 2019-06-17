@@ -71,10 +71,12 @@ abstract class State {
         final int PRIME = 31;
         int result = 1;
         result = result * PRIME + (this.isFinal ? 1231 : 1237);
+        result = result * PRIME + this.output.hashCode();
         for (Transition transition : this.transitions) {
             result = result * PRIME + transition.label;
+            result = result * PRIME + transition.nextState.hashCode();
+            result = result * PRIME + transition.output.hashCode();
         }
-        result = result * PRIME + this.output.hashCode();
         return result;
     }
 }
