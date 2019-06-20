@@ -42,7 +42,7 @@ public class FSTBuilder {
             // terminate last state for currentWord
             final var lastState = tempStates.get(currentWord.length);
             lastState.isFinal = true;
-            lastState.output = OptionalInt.empty();
+            lastState.setStateOutput(OptionalInt.empty());
 
             OptionalInt currentOutputTail = OptionalInt.of(currentOutput);
             for (int i = 1; i < prefixLengthPlus1; i++) {
