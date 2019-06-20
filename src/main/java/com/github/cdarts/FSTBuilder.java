@@ -105,7 +105,7 @@ public class FSTBuilder {
 
     static OptionalInt concat(OptionalInt a, OptionalInt b) {
         if (a.isEmpty()) {
-            return OptionalInt.empty();
+            return a;
         }
         if (b.isEmpty()) {
             return a;
