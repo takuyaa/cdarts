@@ -31,10 +31,10 @@ public class StateTest {
         state2 = new FrozenState(true, new Transition[] {}, OptionalInt.empty());
         assertNotEquals(state1, state2);
 
+        FrozenState anotherState = new FrozenState(false, new Transition[] {}, OptionalInt.empty());
         state1 = new FrozenState(false, new Transition[] {}, OptionalInt.empty());
         state2 = new FrozenState(false,
-                new Transition[] { new Transition((byte) 1, new MutableState(), OptionalInt.empty()) },
-                OptionalInt.empty());
+                new Transition[] { new Transition((byte) 1, anotherState, OptionalInt.empty()) }, OptionalInt.empty());
         assertNotEquals(state1, state2);
     }
 
@@ -63,10 +63,10 @@ public class StateTest {
             assertNotEquals(state1, state2);
         }
 
+        FrozenState anotherState = new FrozenState(false, new Transition[] {}, OptionalInt.empty());
         state1 = new FrozenState(false, new Transition[] {}, OptionalInt.empty());
         state2 = new FrozenState(false,
-                new Transition[] { new Transition((byte) 1, new MutableState(), OptionalInt.empty()) },
-                OptionalInt.empty());
+                new Transition[] { new Transition((byte) 1, anotherState, OptionalInt.empty()) }, OptionalInt.empty());
         if (state1.hashCode() != state2.hashCode()) {
             assertNotEquals(state1, state2);
         }
