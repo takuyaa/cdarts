@@ -54,17 +54,13 @@ public class FSTBuilder {
                 final OptionalInt wordSuffix = subtract(prevOutput, commonPrefix);
 
                 prevState.setTransitionOutput(currentWord[i - 1], commonPrefix);
-                if (wordSuffix.isPresent()) {
-                    // iterate over all transitions from nextState
-                    for (Transition transition : nextState.transitions) {
-                        transition.output = concat(wordSuffix.getAsInt(), transition.output);
-                    }
+                // iterate over all transitions from nextState
+                for (Transition transition : nextState.transitions) {
+                    transition.output = concat(wordSuffix, transition.output);
                 }
                 if (nextState.isFinal) {
-                    if (wordSuffix.isPresent()) {
-                        OptionalInt stateOutput = nextState.getStateOutput();
-                        nextState.setStateOutput(concat(wordSuffix.getAsInt(), stateOutput));
-                    }
+                    OptionalInt stateOutput = nextState.getStateOutput();
+                    nextState.setStateOutput(concat(wordSuffix, stateOutput));
                     currentOutputTail = subtract(currentOutputTail, wordSuffix);
                 }
             }
@@ -107,15 +103,21 @@ public class FSTBuilder {
         return a.getAsInt() == b.getAsInt() ? a : OptionalInt.empty();
     }
 
-    static OptionalInt concat(int a, OptionalInt b) {
+    static OptionalInt concat(OptionalInt a, OptionalInt b) {
+        if (a.isEmpty()) {
+            return OptionalInt.empty();
+        }
+        if (b.isEmpty()) {
+            return a;
+        }
+        if (a.equals(b)) {
+            return a;
+        }
         // add outputs
-        // if (b.isEmpty()) {
-        // return OptionalInt.of(a);
-        // }
         // return OptionalInt.of(a + b.getAsInt());
 
         // adopt former value
-        return OptionalInt.of(a);
+        return a;
     }
 
     static OptionalInt subtract(OptionalInt a, OptionalInt b) {
@@ -123,10 +125,13 @@ public class FSTBuilder {
             assert false;
             return OptionalInt.empty();
         }
+        if (b.isEmpty()) {
+            return a;
+        }
+        if (a.equals(b)) {
+            return OptionalInt.empty();
+        }
         // split outputs
-        // if (b.isEmpty()) {
-        // return a;
-        // }
         // return OptionalInt.of(a.getAsInt() - b.getAsInt());
 
         // ignore subtrahend
