@@ -132,6 +132,7 @@ class MutableState extends State {
     }
 
     void setStateOutput(OptionalInt output) {
+        assert this.isFinal;
         this.output = output;
     }
 
