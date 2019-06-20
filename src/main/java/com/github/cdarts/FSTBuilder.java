@@ -61,8 +61,8 @@ public class FSTBuilder {
                 if (nextState.isFinal) {
                     OptionalInt stateOutput = nextState.getStateOutput();
                     nextState.setStateOutput(concat(wordSuffix, stateOutput));
-                    currentOutputTail = subtract(currentOutputTail, wordSuffix);
                 }
+                currentOutputTail = subtract(currentOutputTail, commonPrefix);
             }
 
             final var lastPrefixState = tempStates.get(prefixLengthPlus1 - 1);
