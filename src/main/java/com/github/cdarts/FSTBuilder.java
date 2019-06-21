@@ -143,27 +143,14 @@ public class FSTBuilder {
         return b1.length - b2.length;
     }
 
-    public static void main(String[] args) {
-        final List<java.util.Map.Entry<String, Integer>> entries = new ArrayList<>();
-        entries.add(Map.entry("abc", 1));
-        entries.add(Map.entry("bd", 2));
-        entries.add(Map.entry("bde", 3));
-
-        // entries.add(Map.entry("apr", 30));
-        // entries.add(Map.entry("aug", 31));
-        // entries.add(Map.entry("dec", 31));
-        // entries.add(Map.entry("feb", 28));
-        // entries.add(Map.entry("jan", 31));
-        // entries.add(Map.entry("jul", 31));
-        // entries.add(Map.entry("jun", 30));
-        // entries.add(Map.entry("may", 31));
-
-        // entries.add(Map.entry("mop", 0));
-        // entries.add(Map.entry("moth", 1));
-        // entries.add(Map.entry("pop", 2));
-        // entries.add(Map.entry("star", 3));
-        // entries.add(Map.entry("stop", 4));
-        // entries.add(Map.entry("top", 5));
+    public static void main(String[] args) throws Exception {
+        final List<Map.Entry<String, Integer>> entries = new ArrayList<>();
+        entries.add(Map.entry("mop", 0));
+        entries.add(Map.entry("moth", 1));
+        entries.add(Map.entry("pop", 2));
+        entries.add(Map.entry("star", 3));
+        entries.add(Map.entry("stop", 4));
+        entries.add(Map.entry("top", 5));
 
         final FSTBuilder builder = new FSTBuilder();
         final FST fst = builder.build(entries.stream().map(entry -> Map
