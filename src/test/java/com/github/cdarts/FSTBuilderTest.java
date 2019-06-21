@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 public class FSTBuilderTest {
     @Test
     public void testBuildWithSimpleKeys() {
-        final List<java.util.Map.Entry<String, Integer>> entries = new ArrayList<>();
+        final List<Map.Entry<String, Integer>> entries = new ArrayList<>();
         entries.add(Map.entry("abc", 1));
         entries.add(Map.entry("bd", 2));
         entries.add(Map.entry("bde", 3));
@@ -26,7 +26,7 @@ public class FSTBuilderTest {
 
     @Test
     public void testBuildWithFixedLengthKeys() {
-        final List<java.util.Map.Entry<String, Integer>> entries = new ArrayList<>();
+        final List<Map.Entry<String, Integer>> entries = new ArrayList<>();
         entries.add(Map.entry("apr", 30));
         entries.add(Map.entry("aug", 31));
         entries.add(Map.entry("dec", 31));
@@ -45,7 +45,7 @@ public class FSTBuilderTest {
 
     @Test
     public void testBuildComplicatedFST() {
-        final List<java.util.Map.Entry<String, Integer>> entries = new ArrayList<>();
+        final List<Map.Entry<String, Integer>> entries = new ArrayList<>();
         entries.add(Map.entry("mop", 0));
         entries.add(Map.entry("moth", 1));
         entries.add(Map.entry("pop", 2));
