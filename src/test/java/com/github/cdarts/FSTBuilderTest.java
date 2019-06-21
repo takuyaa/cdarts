@@ -10,6 +10,12 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public class FSTBuilderTest {
+    FST buildFST(List<Map.Entry<String, Integer>> entries) {
+        final FSTBuilder builder = new FSTBuilder();
+        return builder.build(entries.stream()
+                .map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII), entry.getValue())));
+    }
+
     @Test
     public void testBuildWithSimpleKeys() {
         final List<Map.Entry<String, Integer>> entries = new ArrayList<>();
@@ -17,10 +23,7 @@ public class FSTBuilderTest {
         entries.add(Map.entry("bd", 2));
         entries.add(Map.entry("bde", 3));
 
-        final FSTBuilder builder = new FSTBuilder();
-        final FST fst = builder.build(entries.stream()
-                .map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII), entry.getValue())));
-
+        var fst = buildFST(entries);
         assertEquals(6, fst.states.size());
     }
 
@@ -36,10 +39,7 @@ public class FSTBuilderTest {
         entries.add(Map.entry("jun", 30));
         entries.add(Map.entry("may", 31));
 
-        final FSTBuilder builder = new FSTBuilder();
-        final FST fst = builder.build(entries.stream()
-                .map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII), entry.getValue())));
-
+        var fst = buildFST(entries);
         assertEquals(14, fst.states.size());
     }
 
@@ -53,10 +53,7 @@ public class FSTBuilderTest {
         entries.add(Map.entry("stop", 4));
         entries.add(Map.entry("top", 5));
 
-        final FSTBuilder builder = new FSTBuilder();
-        final FST fst = builder.build(entries.stream()
-                .map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII), entry.getValue())));
-
+        var fst = buildFST(entries);
         assertEquals(10, fst.states.size());
     }
 }
