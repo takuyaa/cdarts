@@ -118,10 +118,7 @@ public class FSTBuilder {
     }
 
     static OptionalInt subtract(OptionalInt a, OptionalInt b) {
-        if (a.isEmpty()) {
-            assert false;
-            return OptionalInt.empty();
-        }
+        assert a.isPresent();
         if (b.isEmpty()) {
             return a;
         }
