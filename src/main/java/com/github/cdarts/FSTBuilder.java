@@ -113,9 +113,6 @@ public class FSTBuilder {
         if (a.equals(b)) {
             return a;
         }
-        // add outputs
-        // return OptionalInt.of(a + b.getAsInt());
-
         // adopt former value
         return a;
     }
@@ -131,9 +128,6 @@ public class FSTBuilder {
         if (a.equals(b)) {
             return OptionalInt.empty();
         }
-        // split outputs
-        // return OptionalInt.of(a.getAsInt() - b.getAsInt());
-
         // ignore subtrahend
         return a;
     }
