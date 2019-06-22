@@ -1,17 +1,16 @@
 package com.github.cdarts;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.Stream;
 
-abstract class State {
+abstract class State<T> {
     boolean isFinal;
-    Transition[] transitions;
-    OptionalInt output;
+    List<Transition<T>> transitions;
+    Optional<T> output;
 
-    Optional<State> transit(byte label) {
-        for (Transition transition : transitions) {
+    Optional<State<T>> transit(byte label) {
+        for (Transition<T> transition : transitions) {
             if (label == transition.label) {
                 return Optional.ofNullable(transition.nextState);
             }
@@ -19,17 +18,17 @@ abstract class State {
         return Optional.empty();
     }
 
-    OptionalInt getStateOutput() {
+    Optional<T> getStateOutput() {
         return this.output;
     }
 
-    OptionalInt transitOutput(byte label) {
-        for (Transition transition : transitions) {
+    Optional<T> transitOutput(byte label) {
+        for (Transition<T> transition : transitions) {
             if (label == transition.label) {
                 return transition.output;
             }
         }
-        return OptionalInt.empty();
+        return Optional.empty();
     }
 
     @Override
@@ -37,34 +36,40 @@ abstract class State {
         if (!(obj instanceof State)) {
             return false;
         }
-        State other = (State) obj;
-        if (this.transitions.length != other.transitions.length) {
-            return false;
-        }
-        for (Transition transition : this.transitions) {
-            OptionalInt output = other.transitOutput(transition.label);
-            if (!output.equals(transition.output)) {
+        try {
+            @SuppressWarnings("unchecked")
+            final State<T> other = (State<T>) obj;
+
+            if (this.transitions.size() != other.transitions.size()) {
                 return false;
             }
-            Optional<State> next = other.transit(transition.label);
-            if (next.isEmpty()) {
+            for (Transition<T> transition : this.transitions) {
+                Optional<T> output = other.transitOutput(transition.label);
+                if (!output.equals(transition.output)) {
+                    return false;
+                }
+                Optional<State<T>> next = other.transit(transition.label);
+                if (next.isEmpty()) {
+                    return false;
+                }
+                // we check these 2 next states are the same Java object
+                State<T> nextState = next.get();
+                assert other instanceof FrozenState ? nextState instanceof FrozenState : true;
+                assert this instanceof FrozenState ? transition.nextState instanceof FrozenState : true;
+                if (nextState != transition.nextState) {
+                    return false;
+                }
+            }
+            if (this.isFinal != other.isFinal) {
                 return false;
             }
-            // we check these 2 next states are the same Java object
-            State nextState = next.get();
-            assert other instanceof FrozenState ? nextState instanceof FrozenState : true;
-            assert this instanceof FrozenState ? transition.nextState instanceof FrozenState : true;
-            if (nextState != transition.nextState) {
+            if (!this.output.equals(other.output)) {
                 return false;
             }
-        }
-        if (this.isFinal != other.isFinal) {
+            return true;
+        } catch (ClassCastException e) {
             return false;
         }
-        if (!this.output.equals(other.output)) {
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -73,7 +78,7 @@ abstract class State {
         int result = 1;
         result = result * PRIME + (this.isFinal ? 1231 : 1237);
         result = result * PRIME + this.output.hashCode();
-        for (Transition transition : this.transitions) {
+        for (Transition<T> transition : this.transitions) {
             result = result * PRIME + transition.label;
             result = result * PRIME + transition.nextState.hashCode();
             result = result * PRIME + transition.output.hashCode();
@@ -82,25 +87,25 @@ abstract class State {
     }
 }
 
-class FrozenState extends State {
+class FrozenState<T> extends State<T> {
     // TODO make FrozenTransition class, and use it here
-    FrozenState(boolean isFinal, Transition[] transitions, OptionalInt output) {
+    FrozenState(boolean isFinal, List<Transition<T>> transitions, Optional<T> output) {
         // assert that all next states from FrozenState are instances of FrozenState
-        assert Stream.of(transitions).allMatch(t -> t.nextState instanceof FrozenState);
+        assert transitions.stream().allMatch(t -> t.nextState instanceof FrozenState);
         this.isFinal = isFinal;
         this.transitions = transitions;
         this.output = output;
     }
 }
 
-class MutableState extends State {
+class MutableState<T> extends State<T> {
     MutableState() {
         this.isFinal = false;
-        this.transitions = new Transition[0];
-        this.output = OptionalInt.empty();
+        this.transitions = new ArrayList<Transition<T>>(0);
+        this.output = Optional.empty();
     }
 
-    MutableState(boolean isFinal, Transition[] transitions, OptionalInt output) {
+    MutableState(boolean isFinal, List<Transition<T>> transitions, Optional<T> output) {
         this.isFinal = isFinal;
         this.transitions = transitions;
         this.output = output;
@@ -108,36 +113,33 @@ class MutableState extends State {
 
     void clear() {
         this.isFinal = false;
-        this.transitions = new Transition[0];
-        this.output = OptionalInt.empty();
+        this.transitions = new ArrayList<Transition<T>>(0);
+        this.output = Optional.empty();
     }
 
-    FrozenState freeze() {
-        return new FrozenState(this.isFinal, Arrays.copyOf(this.transitions, this.transitions.length), this.output);
+    FrozenState<T> freeze() {
+        return new FrozenState<T>(this.isFinal, new ArrayList<Transition<T>>(this.transitions), this.output);
     }
 
-    void setTransition(byte label, State nextState) {
-        final int currentArrayLength = this.transitions.length;
-        for (int i = 0; i < currentArrayLength; i++) {
-            Transition existingTransition = this.transitions[i];
+    void setTransition(byte label, State<T> nextState) {
+        for (int i = 0; i < this.transitions.size(); i++) {
+            Transition<T> existingTransition = this.transitions.get(i);
             if (existingTransition.label == label) {
                 // if the same label transition exists, replace it
-                this.transitions[i] = new Transition(label, nextState, existingTransition.output);
+                this.transitions.set(i, new Transition<T>(label, nextState, existingTransition.output));
                 return;
             }
         }
-        Transition[] newTransitions = Arrays.copyOf(this.transitions, currentArrayLength + 1);
-        newTransitions[currentArrayLength] = new Transition(label, nextState, OptionalInt.empty());
-        this.transitions = newTransitions;
+        this.transitions.add(new Transition<T>(label, nextState, Optional.empty()));
     }
 
-    void setStateOutput(OptionalInt output) {
+    void setStateOutput(Optional<T> output) {
         assert this.isFinal;
         this.output = output;
     }
 
-    void setTransitionOutput(byte label, OptionalInt output) {
-        for (Transition transition : transitions) {
+    void setTransitionOutput(byte label, Optional<T> output) {
+        for (Transition<T> transition : transitions) {
             if (label == transition.label) {
                 transition.output = output;
                 return;
@@ -147,12 +149,12 @@ class MutableState extends State {
 }
 
 // TODO rename Transitions, and update here
-class Transition {
+class Transition<T> {
     final byte label;
-    final State nextState;
-    OptionalInt output;
+    final State<T> nextState;
+    Optional<T> output;
 
-    Transition(byte label, State nextState, OptionalInt output) {
+    Transition(byte label, State<T> nextState, Optional<T> output) {
         this.label = label;
         this.nextState = nextState;
         this.output = output;

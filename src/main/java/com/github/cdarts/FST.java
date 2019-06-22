@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class FST {
-    final Set<FrozenState> states;
-    final FrozenState initialState;
+public class FST<T> {
+    final Set<FrozenState<T>> states;
+    final FrozenState<T> initialState;
 
-    FST(StatesDict dict, FrozenState initialState) {
+    FST(StatesDict<T> dict, FrozenState<T> initialState) {
         this.states = dict.states();
         this.initialState = initialState;
     }
@@ -19,19 +19,20 @@ public class FST {
         dot.append("  rankdir = LR;\n");
         dot.append("  node [shape = circle];\n");
 
-        Map<State, Long> ids = new HashMap<>();
+        Map<State<T>, Long> ids = new HashMap<>();
         long maxId = 1;
-        for (FrozenState state : this.states) {
+        for (FrozenState<T> state : this.states) {
             if (!ids.containsKey(state)) {
                 ids.put(state, maxId++);
             }
 
             // draw a node
-            if (state.getStateOutput().isPresent() || state.isFinal) {
+            var stateOutput = state.getStateOutput();
+            if (stateOutput.isPresent() || state.isFinal) {
                 dot.append("  \"" + ids.get(state) + "\" [");
-                if (state.getStateOutput().isPresent()) {
+                if (stateOutput.isPresent()) {
                     // draw state output as node label
-                    dot.append("xlabel = \"" + state.getStateOutput().getAsInt() + "\" ");
+                    dot.append("xlabel = \"" + stateOutput.get() + "\" ");
                 }
                 if (state.isFinal) {
                     dot.append("peripheries = 2");
@@ -40,15 +41,16 @@ public class FST {
             }
 
             // draw edges
-            for (Transition transition : state.transitions) {
-                State next = transition.nextState;
+            for (Transition<T> transition : state.transitions) {
+                State<T> next = transition.nextState;
                 if (!ids.containsKey(next)) {
                     ids.put(state, maxId++);
                 }
                 byte[] label = { transition.label };
-                if (transition.output.isPresent()) {
+                var output = transition.output;
+                if (output.isPresent()) {
                     dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label = \""
-                            + new String(label) + "/" + transition.output.getAsInt() + "\"];\n");
+                            + new String(label) + "/" + output.get() + "\"];\n");
                 } else {
                     dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label = \""
                             + new String(label) + "\"];\n");

@@ -6,13 +6,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class FSTBuilderTest {
-    FST buildFST(List<Map.Entry<String, Integer>> entries) {
-        final FSTBuilder builder = new FSTBuilder();
+public class IntegerFSTBuilderTest {
+    FST<Integer> buildFST(List<Map.Entry<String, Integer>> entries) {
+        final var builder = new IntegerFSTBuilder();
         return builder.build(entries.stream()
                 .map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII), entry.getValue())));
     }
@@ -27,17 +27,17 @@ public class FSTBuilderTest {
         assertEquals(3, fst.states.size());
 
         var next = fst.initialState.transit((byte) 'a').get();
-        assertEquals(fst.initialState.transitOutput((byte) 'a'), OptionalInt.empty());
-        assertEquals(next.getStateOutput(), OptionalInt.empty());
+        assertEquals(fst.initialState.transitOutput((byte) 'a'), Optional.empty());
+        assertEquals(next.getStateOutput(), Optional.empty());
 
         var finalStateA = next.transit((byte) 'a').get();
         assertEquals(finalStateA.isFinal, true);
-        assertEquals(finalStateA.getStateOutput(), OptionalInt.empty());
-        assertEquals(next.transitOutput((byte) 'a').getAsInt(), 1);
+        assertEquals(finalStateA.getStateOutput(), Optional.empty());
+        assertEquals(next.transitOutput((byte) 'a').get(), 1);
 
         var finalStateB = next.transit((byte) 'b').get();
         assertEquals(finalStateA == finalStateB, true);
-        assertEquals(next.transitOutput((byte) 'b').getAsInt(), 2);
+        assertEquals(next.transitOutput((byte) 'b').get(), 2);
     }
 
     @Test
@@ -50,18 +50,18 @@ public class FSTBuilderTest {
         assertEquals(3, fst.states.size());
 
         var next = fst.initialState.transit((byte) 'a').get();
-        var nextOutput = fst.initialState.transitOutput((byte) 'a').getAsInt();
+        var nextOutput = fst.initialState.transitOutput((byte) 'a').get();
         assertEquals(nextOutput, 1);
-        assertEquals(next.getStateOutput(), OptionalInt.empty());
+        assertEquals(next.getStateOutput(), Optional.empty());
 
         var finalStateA = next.transit((byte) 'a').get();
         assertEquals(finalStateA.isFinal, true);
-        assertEquals(finalStateA.getStateOutput(), OptionalInt.empty());
-        assertEquals(next.transitOutput((byte) 'a'), OptionalInt.empty());
+        assertEquals(finalStateA.getStateOutput(), Optional.empty());
+        assertEquals(next.transitOutput((byte) 'a'), Optional.empty());
 
         var finalStateB = next.transit((byte) 'b').get();
         assertEquals(finalStateA == finalStateB, true);
-        assertEquals(next.transitOutput((byte) 'b'), OptionalInt.empty());
+        assertEquals(next.transitOutput((byte) 'b'), Optional.empty());
     }
 
     @Test
@@ -74,14 +74,14 @@ public class FSTBuilderTest {
         assertEquals(3, fst.states.size());
 
         var stateA = fst.initialState.transit((byte) 'a').get();
-        assertEquals(fst.initialState.transitOutput((byte) 'a'), OptionalInt.empty());
+        assertEquals(fst.initialState.transitOutput((byte) 'a'), Optional.empty());
         assertEquals(stateA.isFinal, true);
-        assertEquals(stateA.getStateOutput().getAsInt(), 1);
+        assertEquals(stateA.getStateOutput().get(), 1);
 
         var stateB = stateA.transit((byte) 'b').get();
-        assertEquals(stateA.transitOutput((byte) 'b').getAsInt(), 2);
+        assertEquals(stateA.transitOutput((byte) 'b').get(), 2);
         assertEquals(stateB.isFinal, true);
-        assertEquals(stateB.getStateOutput(), OptionalInt.empty());
+        assertEquals(stateB.getStateOutput(), Optional.empty());
     }
 
     @Test
@@ -94,14 +94,14 @@ public class FSTBuilderTest {
         assertEquals(3, fst.states.size());
 
         var stateA = fst.initialState.transit((byte) 'a').get();
-        assertEquals(fst.initialState.transitOutput((byte) 'a').getAsInt(), 1);
+        assertEquals(fst.initialState.transitOutput((byte) 'a').get(), 1);
         assertEquals(stateA.isFinal, true);
-        assertEquals(stateA.getStateOutput(), OptionalInt.empty());
+        assertEquals(stateA.getStateOutput(), Optional.empty());
 
         var stateB = stateA.transit((byte) 'b').get();
-        assertEquals(stateA.transitOutput((byte) 'b'), OptionalInt.empty());
+        assertEquals(stateA.transitOutput((byte) 'b'), Optional.empty());
         assertEquals(stateB.isFinal, true);
-        assertEquals(stateB.getStateOutput(), OptionalInt.empty());
+        assertEquals(stateB.getStateOutput(), Optional.empty());
     }
 
     @Test

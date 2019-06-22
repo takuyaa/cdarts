@@ -4,28 +4,28 @@ import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.Set;
 
-class StatesDict {
+class StatesDict<T> {
     // preserve insetion order for iteration
-    final LinkedHashMap<FrozenState, FrozenState> dict = new LinkedHashMap<>();
+    final LinkedHashMap<FrozenState<T>, FrozenState<T>> dict = new LinkedHashMap<>();
 
-    FrozenState findMinimized(MutableState state) {
+    FrozenState<T> findMinimized(MutableState<T> state) {
         return member(state).orElseGet(() -> {
-            FrozenState r = state.freeze();
+            FrozenState<T> r = state.freeze();
             insert(r);
             return r;
         });
     }
 
-    Optional<FrozenState> member(State state) {
+    Optional<FrozenState<T>> member(State<T> state) {
         return Optional.ofNullable(dict.get(state));
     }
 
-    void insert(FrozenState state) {
+    void insert(FrozenState<T> state) {
         // state object acts as key and value
         this.dict.put(state, state);
     }
 
-    Set<FrozenState> states() {
+    Set<FrozenState<T>> states() {
         return this.dict.keySet();
     }
 }
