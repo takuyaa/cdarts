@@ -49,18 +49,6 @@ public class IntegerFSTBuilder extends FSTBuilder<Integer> {
         return a;
     }
 
-    static int compare(byte[] b1, byte[] b2) {
-        final int shorterLength = Math.min(b1.length, b2.length);
-        for (int i = 0; i < shorterLength; i++) {
-            if (b1[i] != b2[i]) {
-                int i1 = ((int) b1[i]) & 0xFF;
-                int i2 = ((int) b2[i]) & 0xFF;
-                return i1 - i2;
-            }
-        }
-        return b1.length - b2.length;
-    }
-
     public static void main(String[] args) throws Exception {
         final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
         lexicon.add(Map.entry("mop", 0));
