@@ -27,7 +27,7 @@ public class FST<T> {
             }
 
             // draw a node
-            var stateOutput = state.getStateOutput();
+            final var stateOutput = state.getStateOutput();
             if (stateOutput.isPresent() || state.isFinal) {
                 dot.append("  \"" + ids.get(state) + "\" [");
                 if (stateOutput.isPresent()) {
@@ -42,7 +42,7 @@ public class FST<T> {
 
             // draw edges
             for (Transition<T> transition : state.transitions) {
-                State<T> next = transition.nextState;
+                final State<T> next = transition.nextState;
                 if (!ids.containsKey(next)) {
                     ids.put(state, maxId++);
                 }
