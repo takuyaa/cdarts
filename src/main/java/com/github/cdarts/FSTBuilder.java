@@ -51,19 +51,19 @@ public abstract class FSTBuilder<T> {
                 final MutableState<T> nextState = tempStates.get(i);
 
                 final Optional<T> prevOutput = prevState.transitOutput(currentWord[i - 1]);
-                final Optional<T> commonPrefix = prefix(prevOutput, currentOutputTail);
-                final Optional<T> wordSuffix = subtract(prevOutput, commonPrefix);
+                final Optional<T> outputPrefix = prefix(prevOutput, currentOutputTail);
+                final Optional<T> outputSuffix = subtract(prevOutput, outputPrefix);
 
-                prevState.setTransitionOutput(currentWord[i - 1], commonPrefix);
+                prevState.setTransitionOutput(currentWord[i - 1], outputPrefix);
                 // iterate over all transitions from nextState
                 for (Transition<T> transition : nextState.transitions) {
-                    transition.output = concat(wordSuffix, transition.output);
+                    transition.output = concat(outputSuffix, transition.output);
                 }
                 if (nextState.isFinal) {
                     Optional<T> stateOutput = nextState.getStateOutput();
-                    nextState.setStateOutput(concat(wordSuffix, stateOutput));
+                    nextState.setStateOutput(concat(outputSuffix, stateOutput));
                 }
-                currentOutputTail = subtract(currentOutputTail, commonPrefix);
+                currentOutputTail = subtract(currentOutputTail, outputPrefix);
             }
 
             final var lastPrefixState = tempStates.get(prefixLengthPlus1 - 1);
