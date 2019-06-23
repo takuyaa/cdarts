@@ -46,15 +46,25 @@ public class FST<T> {
                 if (!ids.containsKey(next)) {
                     ids.put(state, maxId++);
                 }
-                byte[] label = { transition.label };
-                var output = transition.output;
-                if (output.isPresent()) {
-                    dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label = \""
-                            + new String(label) + "/" + output.get() + "\"];\n");
-                } else {
+
+                final byte[] label = { transition.label };
+                final var output = transition.output;
+
+                if (output.isEmpty()) {
                     dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label = \""
                             + new String(label) + "\"];\n");
+                    continue;
                 }
+
+                final String outputString;
+                if (output.get() instanceof byte[]) {
+                    byte[] out = (byte[]) output.get();
+                    outputString = new String(out);
+                } else {
+                    outputString = output.get().toString();
+                }
+                dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label = \"" + new String(label)
+                        + "/" + outputString + "\"];\n");
             }
         }
         dot.append("}\n");
