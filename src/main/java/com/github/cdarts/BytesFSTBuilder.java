@@ -97,7 +97,7 @@ public class BytesFSTBuilder extends FSTBuilder<byte[]> {
             }
             start++;
         }
-        if (start == 0) {
+        if (start == a_.length) {
             return Optional.empty();
         }
         return Optional.of(Arrays.copyOfRange(a_, start, a_.length));
