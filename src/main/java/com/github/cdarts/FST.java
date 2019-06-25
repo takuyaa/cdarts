@@ -16,8 +16,8 @@ public class FST<T> {
     String translateToDot() {
         final var dot = new StringBuilder(1024);
         dot.append("digraph G {\n");
-        dot.append("  rankdir = LR;\n");
-        dot.append("  node [shape = circle fixedsize = true];\n");
+        dot.append("  rankdir=LR;\n");
+        dot.append("  node [shape=circle fixedsize=true];\n");
 
         Map<State<T>, Long> ids = new HashMap<>();
         long maxId = 1;
@@ -29,14 +29,14 @@ public class FST<T> {
             // draw a node
             final var stateOutput = state.getStateOutput();
             if (stateOutput.isPresent() || state.isFinal) {
-                dot.append("  \"" + ids.get(state) + "\" [label = \"" + ids.get(state));
+                dot.append("  \"" + ids.get(state) + "\" [label=\"" + ids.get(state));
                 if (stateOutput.isPresent()) {
                     // draw state output as node label
                     dot.append("/" + stateOutput.get());
                 }
                 dot.append("\"");
                 if (state.isFinal) {
-                    dot.append(" peripheries = 2");
+                    dot.append(" peripheries=2");
                 }
                 dot.append("];\n");
             }
@@ -52,8 +52,8 @@ public class FST<T> {
                 final var output = transition.output;
 
                 if (output.isEmpty()) {
-                    dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label = \""
-                            + new String(label) + "\"];\n");
+                    dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label=\"" + new String(label)
+                            + "\"];\n");
                     continue;
                 }
 
@@ -64,7 +64,7 @@ public class FST<T> {
                 } else {
                     outputString = output.get().toString();
                 }
-                dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label = \"" + new String(label)
+                dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label=\"" + new String(label)
                         + "/" + outputString + "\"];\n");
             }
         }
