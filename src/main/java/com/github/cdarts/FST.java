@@ -68,7 +68,7 @@ public class FST<T> {
                         + "/" + outputString + "\"];\n");
             }
         }
-        dot.append("}\n");
+        dot.append("}");
         dot.trimToSize();
         return dot.toString();
     }
