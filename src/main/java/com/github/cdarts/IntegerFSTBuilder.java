@@ -63,6 +63,6 @@ public class IntegerFSTBuilder extends FSTBuilder<Integer> {
 
         final var builder = new IntegerFSTBuilder();
         final var fst = builder.build(entries);
-        System.out.println(fst.translateToDot());
+        System.out.println(fst.toDot());
     }
 }

@@ -13,7 +13,7 @@ public class FST<T> {
         this.initialState = initialState;
     }
 
-    String translateToDot() {
+    String toDot() {
         final var dot = new StringBuilder(1024);
         dot.append("digraph G {\n");
         dot.append("  rankdir=LR;\n");

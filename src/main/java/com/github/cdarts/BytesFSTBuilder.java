@@ -119,6 +119,6 @@ public class BytesFSTBuilder extends FSTBuilder<byte[]> {
 
         final var builder = new BytesFSTBuilder();
         final var fst = builder.build(entries);
-        System.out.println(fst.translateToDot());
+        System.out.println(fst.toDot());
     }
 }
