@@ -2,6 +2,7 @@ package com.github.cdarts;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public class FST<T> {
@@ -32,7 +33,7 @@ public class FST<T> {
                 dot.append("  \"" + ids.get(state) + "\" [label=\"" + ids.get(state));
                 if (stateOutput.isPresent()) {
                     // draw state output as node label
-                    dot.append("/" + stateOutput.get());
+                    dot.append("/" + outputToString(stateOutput));
                 }
                 dot.append("\"");
                 if (state.isFinal) {
@@ -47,29 +48,30 @@ public class FST<T> {
                 if (!ids.containsKey(next)) {
                     ids.put(state, maxId++);
                 }
-
                 final byte[] label = { transition.label };
                 final var output = transition.output;
-
                 if (output.isEmpty()) {
                     dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label=\"" + new String(label)
                             + "\"];\n");
                     continue;
                 }
-
-                final String outputString;
-                if (output.get() instanceof byte[]) {
-                    byte[] out = (byte[]) output.get();
-                    outputString = new String(out);
-                } else {
-                    outputString = output.get().toString();
-                }
                 dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label=\"" + new String(label)
-                        + "/" + outputString + "\"];\n");
+                        + "/" + outputToString(output) + "\"];\n");
             }
         }
         dot.append("}");
         dot.trimToSize();
         return dot.toString();
+    }
+
+    private String outputToString(Optional<T> output) {
+        if (output.isEmpty()) {
+            return "";
+        }
+        if (output.get() instanceof byte[]) {
+            return new String((byte[]) output.get());
+        } else {
+            return output.get().toString();
+        }
     }
 }
