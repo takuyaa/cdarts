@@ -57,10 +57,7 @@ public class IntegerFSTBuilder extends FSTBuilder<Integer> {
         lexicon.add(Map.entry("star", 3));
         lexicon.add(Map.entry("stop", 4));
         lexicon.add(Map.entry("top", 5));
-
-        final var entries = lexicon.stream().map(entry -> Map
-                .entry(entry.getKey().getBytes(java.nio.charset.StandardCharsets.US_ASCII), entry.getValue()));
-
+        final var entries = lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue()));
         final var builder = new IntegerFSTBuilder();
         final var fst = builder.build(entries);
         System.out.println(fst.toDot());

@@ -1,6 +1,5 @@
 package com.github.cdarts;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -113,10 +112,8 @@ public class BytesFSTBuilder extends FSTBuilder<byte[]> {
         lexicon.add(Map.entry("jul", "31"));
         lexicon.add(Map.entry("jun", "30"));
         lexicon.add(Map.entry("may", "31"));
-
-        final var entries = lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII),
-                entry.getValue().getBytes(StandardCharsets.US_ASCII)));
-
+        final var entries = lexicon.stream()
+                .map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue().getBytes()));
         final var builder = new BytesFSTBuilder();
         final var fst = builder.build(entries);
         System.out.println(fst.toDot());
