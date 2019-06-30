@@ -3,7 +3,6 @@ package com.github.cdarts;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +13,8 @@ import org.junit.jupiter.api.Test;
 public class BytesFSTBuilderTest {
     FST<byte[]> buildFST(List<Map.Entry<String, String>> lexicon) {
         final var builder = new BytesFSTBuilder();
-        return builder.build(lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII),
-                entry.getValue().getBytes(StandardCharsets.US_ASCII))));
+        return builder.build(
+                lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue().getBytes())));
     }
 
     @Test
@@ -35,8 +34,8 @@ public class BytesFSTBuilderTest {
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, false);
         assertEquals(state2.getStateOutput(), Optional.empty());
-        assertArrayEquals(state2.transitOutput((byte) 'a').get(), "1".getBytes(StandardCharsets.US_ASCII));
-        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "2".getBytes(StandardCharsets.US_ASCII));
+        assertArrayEquals(state2.transitOutput((byte) 'a').get(), "1".getBytes());
+        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "2".getBytes());
 
         var state3a = state2.transit((byte) 'a').get();
         assertEquals(state3a.isFinal, true);
@@ -58,7 +57,7 @@ public class BytesFSTBuilderTest {
         var state1 = fst.initialState;
         assertEquals(state1.isFinal, false);
         assertEquals(state1.getStateOutput(), Optional.empty());
-        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes(StandardCharsets.US_ASCII));
+        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes());
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, false);
@@ -90,8 +89,8 @@ public class BytesFSTBuilderTest {
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, true);
-        assertArrayEquals(state2.getStateOutput().get(), "1".getBytes(StandardCharsets.US_ASCII));
-        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "2".getBytes(StandardCharsets.US_ASCII));
+        assertArrayEquals(state2.getStateOutput().get(), "1".getBytes());
+        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "2".getBytes());
 
         var state3 = state2.transit((byte) 'b').get();
         assertEquals(state3.isFinal, true);
@@ -110,7 +109,7 @@ public class BytesFSTBuilderTest {
         var state1 = fst.initialState;
         assertEquals(state1.isFinal, false);
         assertEquals(state1.getStateOutput(), Optional.empty());
-        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes(StandardCharsets.US_ASCII));
+        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes());
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, true);
@@ -134,13 +133,13 @@ public class BytesFSTBuilderTest {
         var state1 = fst.initialState;
         assertEquals(state1.isFinal, false);
         assertEquals(state1.getStateOutput(), Optional.empty());
-        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes(StandardCharsets.US_ASCII));
+        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes());
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, false);
         assertEquals(state2.getStateOutput(), Optional.empty());
-        assertArrayEquals(state2.transitOutput((byte) 'a').get(), "11".getBytes(StandardCharsets.US_ASCII));
-        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "21".getBytes(StandardCharsets.US_ASCII));
+        assertArrayEquals(state2.transitOutput((byte) 'a').get(), "11".getBytes());
+        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "21".getBytes());
 
         var state3a = state2.transit((byte) 'a').get();
         assertEquals(state3a.isFinal, false);

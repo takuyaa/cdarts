@@ -2,7 +2,6 @@ package com.github.cdarts;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +12,7 @@ import org.junit.jupiter.api.Test;
 public class IntegerFSTBuilderTest {
     FST<Integer> buildFST(List<Map.Entry<String, Integer>> lexicon) {
         final var builder = new IntegerFSTBuilder();
-        return builder.build(lexicon.stream()
-                .map(entry -> Map.entry(entry.getKey().getBytes(StandardCharsets.US_ASCII), entry.getValue())));
+        return builder.build(lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue())));
     }
 
     @Test
