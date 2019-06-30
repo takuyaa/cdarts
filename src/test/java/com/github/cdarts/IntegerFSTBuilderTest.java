@@ -26,18 +26,23 @@ public class IntegerFSTBuilderTest {
         final var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
 
-        var next = fst.initialState.transit((byte) 'a').get();
-        assertEquals(fst.initialState.transitOutput((byte) 'a'), Optional.empty());
-        assertEquals(next.getStateOutput(), Optional.empty());
+        var state1 = fst.initialState;
+        assertEquals(state1.isFinal, false);
+        assertEquals(state1.getStateOutput(), Optional.empty());
+        assertEquals(state1.transitOutput((byte) 'a'), Optional.empty());
 
-        var finalStateA = next.transit((byte) 'a').get();
-        assertEquals(finalStateA.isFinal, true);
-        assertEquals(finalStateA.getStateOutput(), Optional.empty());
-        assertEquals(next.transitOutput((byte) 'a').get(), 1);
+        var state2 = state1.transit((byte) 'a').get();
+        assertEquals(state2.isFinal, false);
+        assertEquals(state2.getStateOutput(), Optional.empty());
+        assertEquals(state2.transitOutput((byte) 'a').get(), 1);
+        assertEquals(state2.transitOutput((byte) 'b').get(), 2);
 
-        var finalStateB = next.transit((byte) 'b').get();
-        assertEquals(finalStateA == finalStateB, true);
-        assertEquals(next.transitOutput((byte) 'b').get(), 2);
+        var state3a = state2.transit((byte) 'a').get();
+        assertEquals(state3a.isFinal, true);
+        assertEquals(state3a.getStateOutput(), Optional.empty());
+
+        var state3b = state2.transit((byte) 'b').get();
+        assertEquals(state3a == state3b, true);
     }
 
     @Test
@@ -49,19 +54,23 @@ public class IntegerFSTBuilderTest {
         var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
 
-        var next = fst.initialState.transit((byte) 'a').get();
-        var nextOutput = fst.initialState.transitOutput((byte) 'a').get();
-        assertEquals(nextOutput, 1);
-        assertEquals(next.getStateOutput(), Optional.empty());
+        var state1 = fst.initialState;
+        assertEquals(state1.isFinal, false);
+        assertEquals(state1.getStateOutput(), Optional.empty());
+        assertEquals(state1.transitOutput((byte) 'a').get(), 1);
 
-        var finalStateA = next.transit((byte) 'a').get();
-        assertEquals(finalStateA.isFinal, true);
-        assertEquals(finalStateA.getStateOutput(), Optional.empty());
-        assertEquals(next.transitOutput((byte) 'a'), Optional.empty());
+        var state2 = state1.transit((byte) 'a').get();
+        assertEquals(state2.isFinal, false);
+        assertEquals(state2.getStateOutput(), Optional.empty());
+        assertEquals(state2.transitOutput((byte) 'a'), Optional.empty());
+        assertEquals(state2.transitOutput((byte) 'b'), Optional.empty());
 
-        var finalStateB = next.transit((byte) 'b').get();
-        assertEquals(finalStateA == finalStateB, true);
-        assertEquals(next.transitOutput((byte) 'b'), Optional.empty());
+        var state3a = state2.transit((byte) 'a').get();
+        assertEquals(state3a.isFinal, true);
+        assertEquals(state3a.getStateOutput(), Optional.empty());
+
+        var state3b = state2.transit((byte) 'b').get();
+        assertEquals(state3a == state3b, true);
     }
 
     @Test
@@ -73,15 +82,19 @@ public class IntegerFSTBuilderTest {
         var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
 
-        var stateA = fst.initialState.transit((byte) 'a').get();
-        assertEquals(fst.initialState.transitOutput((byte) 'a'), Optional.empty());
-        assertEquals(stateA.isFinal, true);
-        assertEquals(stateA.getStateOutput().get(), 1);
+        var state1 = fst.initialState;
+        assertEquals(state1.isFinal, false);
+        assertEquals(state1.getStateOutput(), Optional.empty());
+        assertEquals(state1.transitOutput((byte) 'a'), Optional.empty());
 
-        var stateB = stateA.transit((byte) 'b').get();
-        assertEquals(stateA.transitOutput((byte) 'b').get(), 2);
-        assertEquals(stateB.isFinal, true);
-        assertEquals(stateB.getStateOutput(), Optional.empty());
+        var state2 = state1.transit((byte) 'a').get();
+        assertEquals(state2.isFinal, true);
+        assertEquals(state2.getStateOutput().get(), 1);
+        assertEquals(state2.transitOutput((byte) 'b').get(), 2);
+
+        var state3 = state2.transit((byte) 'b').get();
+        assertEquals(state3.isFinal, true);
+        assertEquals(state3.getStateOutput(), Optional.empty());
     }
 
     @Test
@@ -93,15 +106,19 @@ public class IntegerFSTBuilderTest {
         var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
 
-        var stateA = fst.initialState.transit((byte) 'a').get();
-        assertEquals(fst.initialState.transitOutput((byte) 'a').get(), 1);
-        assertEquals(stateA.isFinal, true);
-        assertEquals(stateA.getStateOutput(), Optional.empty());
+        var state1 = fst.initialState;
+        assertEquals(state1.isFinal, false);
+        assertEquals(state1.getStateOutput(), Optional.empty());
+        assertEquals(state1.transitOutput((byte) 'a').get(), 1);
 
-        var stateB = stateA.transit((byte) 'b').get();
-        assertEquals(stateA.transitOutput((byte) 'b'), Optional.empty());
-        assertEquals(stateB.isFinal, true);
-        assertEquals(stateB.getStateOutput(), Optional.empty());
+        var state2 = state1.transit((byte) 'a').get();
+        assertEquals(state2.isFinal, true);
+        assertEquals(state2.getStateOutput(), Optional.empty());
+        assertEquals(state2.transitOutput((byte) 'b'), Optional.empty());
+
+        var state3 = state2.transit((byte) 'b').get();
+        assertEquals(state3.isFinal, true);
+        assertEquals(state3.getStateOutput(), Optional.empty());
     }
 
     @Test
