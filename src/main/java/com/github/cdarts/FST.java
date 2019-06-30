@@ -30,7 +30,8 @@ public class FST<T> {
             // draw a node
             final var stateOutput = state.getStateOutput();
             if (stateOutput.isPresent() || state.isFinal) {
-                dot.append("  \"" + ids.get(state) + "\" [label=\"" + ids.get(state));
+                final long stateId = ids.get(state);
+                dot.append("  \"" + stateId + "\" [label=\"" + stateId);
                 if (stateOutput.isPresent()) {
                     // draw state output as node label
                     dot.append("/" + outputToString(stateOutput));
@@ -45,18 +46,17 @@ public class FST<T> {
             // draw edges
             for (Transition<T> transition : state.transitions) {
                 final State<T> next = transition.nextState;
-                if (!ids.containsKey(next)) {
-                    ids.put(state, maxId++);
-                }
                 final byte[] label = { transition.label };
-                final var output = transition.output;
+                final Optional<T> output = transition.output;
+                final long currentStateId = ids.get(state);
+                final long nextStateId = ids.get(next);
                 if (output.isEmpty()) {
-                    dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label=\"" + new String(label)
+                    dot.append("  \"" + currentStateId + "\" -> \"" + nextStateId + "\" [label=\"" + new String(label)
                             + "\"];\n");
-                    continue;
+                } else {
+                    dot.append("  \"" + currentStateId + "\" -> \"" + nextStateId + "\" [label=\"" + new String(label)
+                            + "/" + outputToString(output) + "\"];\n");
                 }
-                dot.append("  \"" + ids.get(state) + "\" -> \"" + ids.get(next) + "\" [label=\"" + new String(label)
-                        + "/" + outputToString(output) + "\"];\n");
             }
         }
         dot.append("}");
