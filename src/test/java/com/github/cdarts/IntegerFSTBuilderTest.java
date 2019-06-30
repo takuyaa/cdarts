@@ -122,6 +122,39 @@ public class IntegerFSTBuilderTest {
     }
 
     @Test
+    public void testBuildWithOutputsHaveSamePrefixAndSuffix() {
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("aaa", 111));
+        lexicon.add(Map.entry("aba", 121));
+
+        var fst = buildFST(lexicon);
+        assertEquals(4, fst.states.size());
+
+        var state1 = fst.initialState;
+        assertEquals(state1.isFinal, false);
+        assertEquals(state1.getStateOutput(), Optional.empty());
+        assertEquals(state1.transitOutput((byte) 'a'), Optional.empty());
+
+        var state2 = state1.transit((byte) 'a').get();
+        assertEquals(state2.isFinal, false);
+        assertEquals(state2.getStateOutput(), Optional.empty());
+        assertEquals(state2.transitOutput((byte) 'a').get(), 111);
+        assertEquals(state2.transitOutput((byte) 'b').get(), 121);
+
+        var state3a = state2.transit((byte) 'a').get();
+        assertEquals(state3a.isFinal, false);
+        assertEquals(state3a.getStateOutput(), Optional.empty());
+        assertEquals(state3a.transitOutput((byte) 'a'), Optional.empty());
+
+        var state3b = state2.transit((byte) 'b').get();
+        assertEquals(state3a == state3b, true);
+
+        var state4 = state3a.transit((byte) 'a').get();
+        assertEquals(state4.isFinal, true);
+        assertEquals(state4.getStateOutput(), Optional.empty());
+    }
+
+    @Test
     public void testBuildWithFixedLengthKeys() {
         final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
         lexicon.add(Map.entry("apr", 30));
