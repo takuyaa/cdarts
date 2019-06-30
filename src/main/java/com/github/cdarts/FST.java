@@ -1,17 +1,65 @@
 package com.github.cdarts;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class FST<T> {
+public class FST<T> implements Iterable<State<T>> {
     final Set<FrozenState<T>> states;
     final FrozenState<T> initialState;
 
     FST(StatesDict<T> dict, FrozenState<T> initialState) {
         this.states = dict.states();
         this.initialState = initialState;
+    }
+
+    @Override
+    public Iterator<State<T>> iterator() {
+        HashSet<State<T>> isVisited = new HashSet<>();
+        Deque<State<T>> stack = new ArrayDeque<>();
+        stack.push(initialState);
+
+        return new Iterator<State<T>>() {
+            @Override
+            public boolean hasNext() {
+                while (true) {
+                    var next = stack.peek();
+                    if (next == null) {
+                        return false;
+                    }
+                    if (!isVisited.contains(next)) {
+                        return true;
+                    }
+                    // exhoust visited states
+                    stack.pop();
+                }
+            }
+
+            @Override
+            public State<T> next() {
+                while (true) {
+                    if (stack.peek() == null) {
+                        return null;
+                    }
+                    var next = stack.pop();
+                    if (!isVisited.contains(next)) {
+                        isVisited.add(next);
+                        // push to stack in reverse order
+                        for (int i = next.transitions.size() - 1; i >= 0; i--) {
+                            stack.push(next.transitions.get(i).nextState);
+                        }
+                        return next;
+                    }
+                    // skip visited states
+                    stack.pop();
+                }
+            }
+        };
     }
 
     String toDot() {
