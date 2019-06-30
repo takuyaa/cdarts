@@ -70,11 +70,10 @@ public class FST<T> implements Iterable<State<T>> {
 
         Map<State<T>, Long> ids = new HashMap<>();
         long maxId = 1;
-        for (FrozenState<T> state : this.states) {
-            if (!ids.containsKey(state)) {
-                ids.put(state, maxId++);
-            }
-
+        for (State<T> state : this) {
+            ids.put(state, maxId++);
+        }
+        for (State<T> state : this) {
             // draw a node
             final var stateOutput = state.getStateOutput();
             if (stateOutput.isPresent() || state.isFinal) {
