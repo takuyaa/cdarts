@@ -1,8 +1,9 @@
 package com.github.cdarts;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -103,17 +104,13 @@ public class BytesFSTBuilder extends FSTBuilder<byte[]> {
     }
 
     public static void main(String[] args) throws Exception {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("apr", "30"));
-        lexicon.add(Map.entry("aug", "31"));
-        lexicon.add(Map.entry("dec", "31"));
-        lexicon.add(Map.entry("feb", "28"));
-        lexicon.add(Map.entry("jan", "31"));
-        lexicon.add(Map.entry("jul", "31"));
-        lexicon.add(Map.entry("jun", "30"));
-        lexicon.add(Map.entry("may", "31"));
-        final var entries = lexicon.stream()
-                .map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue().getBytes()));
+        final var entries = new BufferedReader(new InputStreamReader(System.in)).lines().map((String line) -> {
+            var columns = line.split(",");
+            var key = columns[0].replace("\"", "");
+            var value = columns[1].replace("\"", "");
+            return Map.entry(key.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
+        });
+
         final var builder = new BytesFSTBuilder();
         final var fst = builder.build(entries);
         System.out.println(fst.toDot());

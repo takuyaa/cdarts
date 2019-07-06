@@ -1,7 +1,8 @@
 package com.github.cdarts;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -50,14 +51,13 @@ public class IntegerFSTBuilder extends FSTBuilder<Integer> {
     }
 
     public static void main(String[] args) throws Exception {
-        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("mop", 0));
-        lexicon.add(Map.entry("moth", 1));
-        lexicon.add(Map.entry("pop", 2));
-        lexicon.add(Map.entry("star", 3));
-        lexicon.add(Map.entry("stop", 4));
-        lexicon.add(Map.entry("top", 5));
-        final var entries = lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue()));
+        final var entries = new BufferedReader(new InputStreamReader(System.in)).lines().map((String line) -> {
+            var columns = line.split(",");
+            var key = columns[0].replace("\"", "");
+            var value = Integer.parseInt(columns[1].replace("\"", ""));
+            return Map.entry(key.getBytes(StandardCharsets.UTF_8), value);
+        });
+
         final var builder = new IntegerFSTBuilder();
         final var fst = builder.build(entries);
         System.out.println(fst.toDot());
