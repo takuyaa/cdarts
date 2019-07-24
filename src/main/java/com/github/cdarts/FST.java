@@ -18,6 +18,10 @@ public class FST<T> implements Iterable<State<T>> {
         this.initialState = initialState;
     }
 
+    public FrozenState<T> initialState() {
+        return initialState;
+    }
+
     @Override
     public Iterator<State<T>> iterator() {
         HashSet<State<T>> isVisited = new HashSet<>();

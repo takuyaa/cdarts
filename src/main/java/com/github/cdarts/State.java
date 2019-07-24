@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-abstract class State<T> {
-    boolean isFinal;
-    List<Transition<T>> transitions;
-    Optional<T> output;
+public abstract class State<T> {
+    public boolean isFinal;
+    public List<Transition<T>> transitions;
+    public Optional<T> output;
 
-    Optional<State<T>> transit(byte label) {
+    public Optional<State<T>> transit(byte label) {
         for (Transition<T> transition : transitions) {
             if (label == transition.label) {
                 return Optional.ofNullable(transition.nextState);
@@ -18,11 +18,11 @@ abstract class State<T> {
         return Optional.empty();
     }
 
-    Optional<T> getStateOutput() {
+    public Optional<T> getStateOutput() {
         return this.output;
     }
 
-    Optional<T> transitOutput(byte label) {
+    public Optional<T> transitOutput(byte label) {
         for (Transition<T> transition : transitions) {
             if (label == transition.label) {
                 return transition.output;
@@ -146,19 +146,4 @@ class MutableState<T> extends State<T> {
             }
         }
     }
-}
-
-// TODO rename Transitions, and update here
-class Transition<T> {
-    final byte label;
-    final State<T> nextState;
-    Optional<T> output;
-
-    Transition(byte label, State<T> nextState, Optional<T> output) {
-        this.label = label;
-        this.nextState = nextState;
-        this.output = output;
-    }
-
-    // TODO implement equals() and hashCode()
 }
