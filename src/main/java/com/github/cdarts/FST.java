@@ -66,7 +66,7 @@ public class FST<T> implements Iterable<State<T>> {
         };
     }
 
-    String toDot() {
+    public String toDot() {
         final var dot = new StringBuilder(1024);
         dot.append("digraph G {\n");
         dot.append("  rankdir=LR;\n");
