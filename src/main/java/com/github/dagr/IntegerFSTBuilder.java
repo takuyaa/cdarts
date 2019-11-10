@@ -1,4 +1,4 @@
-package com.github.cdarts;
+package com.github.dagr;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

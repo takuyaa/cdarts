@@ -1,6 +1,5 @@
-package com.github.cdarts;
+package com.github.dagr;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
@@ -10,18 +9,17 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-public class BytesFSTBuilderTest {
-    FST<byte[]> buildFST(List<Map.Entry<String, String>> lexicon) {
-        final var builder = new BytesFSTBuilder();
-        return builder.build(
-                lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue().getBytes())));
+public class IntegerFSTBuilderTest {
+    FST<Integer> buildFST(List<Map.Entry<String, Integer>> lexicon) {
+        final var builder = new IntegerFSTBuilder();
+        return builder.build(lexicon.stream().map(entry -> Map.entry(entry.getKey().getBytes(), entry.getValue())));
     }
 
     @Test
     public void testBuildWithSimpleKeys() {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("aa", "1"));
-        lexicon.add(Map.entry("ab", "2"));
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("aa", 1));
+        lexicon.add(Map.entry("ab", 2));
 
         final var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
@@ -34,8 +32,8 @@ public class BytesFSTBuilderTest {
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, false);
         assertEquals(state2.getStateOutput(), Optional.empty());
-        assertArrayEquals(state2.transitOutput((byte) 'a').get(), "1".getBytes());
-        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "2".getBytes());
+        assertEquals(state2.transitOutput((byte) 'a').get(), 1);
+        assertEquals(state2.transitOutput((byte) 'b').get(), 2);
 
         var state3a = state2.transit((byte) 'a').get();
         assertEquals(state3a.isFinal, true);
@@ -47,9 +45,9 @@ public class BytesFSTBuilderTest {
 
     @Test
     public void testBuildWithSimpleKeysAndSameOutputs() {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("aa", "1"));
-        lexicon.add(Map.entry("ab", "1"));
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("aa", 1));
+        lexicon.add(Map.entry("ab", 1));
 
         var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
@@ -57,7 +55,7 @@ public class BytesFSTBuilderTest {
         var state1 = fst.initialState;
         assertEquals(state1.isFinal, false);
         assertEquals(state1.getStateOutput(), Optional.empty());
-        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes());
+        assertEquals(state1.transitOutput((byte) 'a').get(), 1);
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, false);
@@ -75,9 +73,9 @@ public class BytesFSTBuilderTest {
 
     @Test
     public void testBuildWithKeysHaveSamePrefix() {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("a", "1"));
-        lexicon.add(Map.entry("ab", "2"));
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("a", 1));
+        lexicon.add(Map.entry("ab", 2));
 
         var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
@@ -89,8 +87,8 @@ public class BytesFSTBuilderTest {
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, true);
-        assertArrayEquals(state2.getStateOutput().get(), "1".getBytes());
-        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "2".getBytes());
+        assertEquals(state2.getStateOutput().get(), 1);
+        assertEquals(state2.transitOutput((byte) 'b').get(), 2);
 
         var state3 = state2.transit((byte) 'b').get();
         assertEquals(state3.isFinal, true);
@@ -99,9 +97,9 @@ public class BytesFSTBuilderTest {
 
     @Test
     public void testBuildWithKeysHaveSamePrefixAndSameOutputs() {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("a", "1"));
-        lexicon.add(Map.entry("ab", "1"));
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("a", 1));
+        lexicon.add(Map.entry("ab", 1));
 
         var fst = buildFST(lexicon);
         assertEquals(3, fst.states.size());
@@ -109,7 +107,7 @@ public class BytesFSTBuilderTest {
         var state1 = fst.initialState;
         assertEquals(state1.isFinal, false);
         assertEquals(state1.getStateOutput(), Optional.empty());
-        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes());
+        assertEquals(state1.transitOutput((byte) 'a').get(), 1);
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, true);
@@ -123,9 +121,9 @@ public class BytesFSTBuilderTest {
 
     @Test
     public void testBuildWithOutputsHaveSamePrefixAndSuffix() {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("aaa", "111"));
-        lexicon.add(Map.entry("aba", "121"));
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("aaa", 111));
+        lexicon.add(Map.entry("aba", 121));
 
         var fst = buildFST(lexicon);
         assertEquals(4, fst.states.size());
@@ -133,13 +131,13 @@ public class BytesFSTBuilderTest {
         var state1 = fst.initialState;
         assertEquals(state1.isFinal, false);
         assertEquals(state1.getStateOutput(), Optional.empty());
-        assertArrayEquals(state1.transitOutput((byte) 'a').get(), "1".getBytes());
+        assertEquals(state1.transitOutput((byte) 'a'), Optional.empty());
 
         var state2 = state1.transit((byte) 'a').get();
         assertEquals(state2.isFinal, false);
         assertEquals(state2.getStateOutput(), Optional.empty());
-        assertArrayEquals(state2.transitOutput((byte) 'a').get(), "11".getBytes());
-        assertArrayEquals(state2.transitOutput((byte) 'b').get(), "21".getBytes());
+        assertEquals(state2.transitOutput((byte) 'a').get(), 111);
+        assertEquals(state2.transitOutput((byte) 'b').get(), 121);
 
         var state3a = state2.transit((byte) 'a').get();
         assertEquals(state3a.isFinal, false);
@@ -156,15 +154,15 @@ public class BytesFSTBuilderTest {
 
     @Test
     public void testBuildWithFixedLengthKeys() {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("apr", "30"));
-        lexicon.add(Map.entry("aug", "31"));
-        lexicon.add(Map.entry("dec", "31"));
-        lexicon.add(Map.entry("feb", "28"));
-        lexicon.add(Map.entry("jan", "31"));
-        lexicon.add(Map.entry("jul", "31"));
-        lexicon.add(Map.entry("jun", "30"));
-        lexicon.add(Map.entry("may", "31"));
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("apr", 30));
+        lexicon.add(Map.entry("aug", 31));
+        lexicon.add(Map.entry("dec", 31));
+        lexicon.add(Map.entry("feb", 28));
+        lexicon.add(Map.entry("jan", 31));
+        lexicon.add(Map.entry("jul", 31));
+        lexicon.add(Map.entry("jun", 30));
+        lexicon.add(Map.entry("may", 31));
 
         var fst = buildFST(lexicon);
         assertEquals(14, fst.states.size());
@@ -172,13 +170,13 @@ public class BytesFSTBuilderTest {
 
     @Test
     public void testBuildComplicatedFST() {
-        final List<Map.Entry<String, String>> lexicon = new ArrayList<>();
-        lexicon.add(Map.entry("mop", "0"));
-        lexicon.add(Map.entry("moth", "1"));
-        lexicon.add(Map.entry("pop", "2"));
-        lexicon.add(Map.entry("star", "3"));
-        lexicon.add(Map.entry("stop", "4"));
-        lexicon.add(Map.entry("top", "5"));
+        final List<Map.Entry<String, Integer>> lexicon = new ArrayList<>();
+        lexicon.add(Map.entry("mop", 0));
+        lexicon.add(Map.entry("moth", 1));
+        lexicon.add(Map.entry("pop", 2));
+        lexicon.add(Map.entry("star", 3));
+        lexicon.add(Map.entry("stop", 4));
+        lexicon.add(Map.entry("top", 5));
 
         var fst = buildFST(lexicon);
         assertEquals(10, fst.states.size());
